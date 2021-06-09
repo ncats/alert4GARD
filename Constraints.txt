@@ -1,0 +1,5 @@
+Constraints
+
+CREATE CONSTRAINT ON (article:Article) ASSERT article.pubmed_id IS UNIQUE
+CREATE CONSTRAINT ON (disease:Disease) ASSERT disease.gard_id IS UNIQUE
+CREATE CONSTRAINT ON (meshQualifier:MeshQualifier) ASSERT meshQualifier.qualifierName IS UNIQUE

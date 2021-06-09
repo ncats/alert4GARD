@@ -1,0 +1,54 @@
+"0000359",
+"0014996",
+"0013533",
+"0014965",
+"0001754",
+"0000355",
+
+
+import json
+import urllib
+from urllib import request
+from urllib import parse
+import neo4j
+from neo4j import GraphDatabase, ServiceUnavailable, basic_auth
+import datetime
+from datetime import date
+import time
+import logging, logging.config
+import itertools
+
+def find_mondo_articles(MondoID):
+    """fetch mondo articles and return a map"""
+    # https://api.monarchinitiative.org/api/bioentity/disease/MONDO:0007846/publications
+
+    data = request.urlopen("https://api.monarchinitiative.org/api/bioentity/disease/MONDO:" + MondoID + "/publications").read().decode()
+
+    return json.loads(data)
+
+
+def save_mondo_data():
+    with GraphDatabase.driver("bolt://3.128.119.166:7687",auth=("neo4j", "back up Generic Plains 27")) as driver:
+      try:
+        with driver.session() as session:
+          results = ["0000359","0014996","0013533","0014965","0001754","0000355"]
+          results = dict(itertools.islice(results.items(),1,2))
+          for idx in enumerate(results):                                 
+            time.sleep(0.34)
+            logging.warning(f'{idx}: Invoking find_articles({results[gard_id]},{mindate},{maxdate})')
+            try:
+              pubmedIDs = find_mondo_articles("0007846")
+            except urllib.request.URLError as e:
+              logging.error(f'Exception when finding articles: {e}')
+              continue
+
+            logging.debug('Invoking create_gard_disease')
+            disease_node = create_mondo_node(session, gard_id, results[gard_id])
+
+
+def main():
+  save_mondo_data()
+
+
+if __name__ == '__main__':
+  main()
